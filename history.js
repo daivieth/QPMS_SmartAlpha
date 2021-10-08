@@ -51,9 +51,6 @@ function getPortfolioPerformance(force){
     
     if (calcPortfTag == 'No'){
 
-      //get benchmark
-      getBenchmark();
-
       //Capture the existing
       var performanceTableRange = dataHistoryTab.getRange('K2:M1000')
       var inputPerformanceTable = performanceTableRange.getValues();

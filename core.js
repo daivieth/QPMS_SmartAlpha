@@ -2,7 +2,7 @@
 Project:          QPMS: Smartalpha
 Author:           Daiviet HUYNH
 Email:            daiviet.huynh@gmail.com
-Website:          https://www.g8moon.com
+Website:          https://www.smartalphatrade.com
 
 For testing:
 ------------
@@ -10,7 +10,7 @@ global_qpms_master_id = '1GaluY25euzzojwkKw4-5cQmiJByWqMoPk0UDXryGuWw';
 global_editor_sp_id = '1keMZ1P3XZ8bEKtVcOUWpU-84vOLoap1jeEi8bcKhbLE';
 global_sentiment_sp_id = '1suzCdwjNMIYOpqsGiVD7mK7GiN8siR4A914drYC8J9U';
 ******************************************************************************/
-var global_version = '2.2.9.2';
+var global_version = '2.2.9.3';
 
 var global_data_main_id = '1AFTbOuVvPTWS1peJ-zK6CUcsj2sy_nYGVaw2T8-7qf8';
 var global_main_base_url = 'https://script.google.com/macros/s/AKfycbzaEMiFQpBkD48QwB3t2VxlJpBRTBRCHQ5I7t-2lA4IUVv-OTBKRzzL42VsAGPAimSW/exec';
