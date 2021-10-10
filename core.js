@@ -58,11 +58,12 @@ function triggerDataUpdate(id){
  * Collect querystring parameters
  * Sign in
  * Model selection
- * @param {string} e
+ * @param {string} e - Querystring parameter(s)
  */
 function doGet(e) {
   var umod = e.parameter.umod;
   var username = e.parameter.username;
+  var page = e.parameter.page;
   var output;
 
   if (umod == null) {
@@ -72,12 +73,10 @@ function doGet(e) {
 
   }
   else {
-    //Generate the main page
-    var vumod = getDataMain(umod,1);
-    if (vumod != '' && vumod != null) { vumod = umod;}
-    if (umod == vumod){
-      output = HtmlService.createHtmlOutput(outputSignalHtmlPage(umod));
-    }
+
+    //Generate App page content
+    output = getAppContent(umod, username, page);
+
   }
 
   return output;

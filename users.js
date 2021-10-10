@@ -42,7 +42,7 @@ function userSignin(username) {
         var umod = getDataMain(username, 8);
         if (vusername != '' && vusername != null) { vusername = vusername.toString().toLowerCase(); }
         if (username == vusername) {
-            output = HtmlService.createHtmlOutput(outputSignalHtmlPage(umod));
+            output = HtmlService.createHtmlOutput(outputSignalHtmlPage(umod, username));
             setSigninInfo(username);
         }
         else {

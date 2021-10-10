@@ -1,15 +1,41 @@
 /**
+ * Manage App page to display
+ * @param {String} umod - Model name to display
+ * @param {String} username - username
+ * @param {String} page - page to display
+ */
+function getAppContent(umod, username, page){
+  var vumod = getDataMain(umod,1);
+  var output;
+  
+  //Signal page
+  if (page == '' || page == null) {
+
+    if (vumod != '' && vumod != null) { 
+      vumod = umod;
+    }
+    if (umod == vumod){
+      output = HtmlService.createHtmlOutput(outputSignalHtmlPage(umod, username));
+    }
+
+  }
+
+  return output;
+}
+
+
+/**
  * Return the html output of the signal page
  * @param {String} umod - Model name
  * 
  */
-function outputSignalHtmlPage(umod){
+function outputSignalHtmlPage(umod, username){
   return getHtmlHeader() + 
           getHeadTag() +
           getPageStyle() +
           getHeadClosingTag() +
           getBodyTag() +
-          getMenuTableHeader(umod) +
+          getMenuTableHeader(umod, username) +
           getSignalTableBodyHeader() +
           getSignalTableRows(umod) +
           getSignalTableBodyClosingTag() +
@@ -90,8 +116,9 @@ function getBodyCloseTag(){
  * Dropdown model selection
  * Button to open the Analytics spreadsheet link
  * @param {String} umod - Model name
+ * @param {String} username - username
  */
-function getMenuTableHeader(umod){
+function getMenuTableHeader(umod, username){
   return `
             <div class="card-header">
               <!-- header section: Logo + Selection box -->
@@ -103,7 +130,7 @@ function getMenuTableHeader(umod){
                 </a>
 
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                `+ getModelDropdownMenuContent() +`
+                `+ getModelDropdownMenuContent(username) +`
                 </div>
               </div>
               <!-- Button Mode -->
@@ -160,13 +187,18 @@ function getPerformanceChartUrl(umod){
 
 /**
  * Create the dropdown menu
+ * @param {String} username - username
  */
-function getModelDropdownMenuContent(){
+function getModelDropdownMenuContent(username){
   var dataModel = SpreadsheetApp.openById(global_data_main_id).getSheetByName('Data:Model').getRange('A1:A1000').getValues();
   var menuOutput = '';
 
   for (var i = 0; i < 1000; i++) {
-    if(dataModel[i][0] != '') { menuOutput = menuOutput + '<a class="dropdown-item" href="'+ getGlobalBaseUrl() +'?umod=' + dataModel[i][0] +'" target="_top">'+ dataModel[i][0] +'</a>' ; }
+    if(dataModel[i][0] != '') {
+
+      menuOutput = menuOutput + '<a class="dropdown-item" href="'+ getGlobalBaseUrl() +'?umod=' + dataModel[i][0] + '&username=' + username +'" target="_top">'+ dataModel[i][0] +'</a>' ;
+
+    }
   }
 
   return menuOutput;
