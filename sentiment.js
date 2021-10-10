@@ -2,6 +2,7 @@
 /**
  * Collect sentiment score for each instrument as provided by the index
  * This function is called from getSentimentScore()
+ * @param {BigInteger} index - the number of the tab as provided in the Sentiment SS
  */
 function getTabDataSentiment(index){
   var sp = SpreadsheetApp.openById(global_sentiment_sp_id);
@@ -67,6 +68,7 @@ function getTabDataSentiment(index){
 /**
  * This function is called from triggerDataUpdate()
  * Call getTabDataSentiment() to collect sentiment score for each individual instrument
+ * @param {Boolean} force - if true then ignore the time constraint and proceed
  */
 function getSentimentScore(force){
   var n = 100;

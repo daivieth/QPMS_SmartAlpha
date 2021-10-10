@@ -1,13 +1,14 @@
-/*
-Get and update trades from the latest signals. 
-Collect Trades data and import in array
-Collect Signals data and import in array
-  columns:
-    0 = ticker
-    3 = range vol.%
-    16 = signal
-    18 = last price
- */
+/**
+* Get and update trades from the latest signals. 
+* Collect Trades data and import in array
+* Collect Signals data and import in array
+*  columns:
+*    0 = ticker
+*    3 = range vol.%
+*    16 = signal
+*    18 = last price
+* @param {Boolean} force - If true, ignore the time constraint and proceed
+*/
 function getTrades(force) {
 
   var flag = SpreadsheetApp.openById(global_editor_sp_id).getSheetByName('Settings').getRange('F8').getValue();
@@ -65,6 +66,9 @@ function getTrades(force) {
  * 1. reset = if true then set the closed trade.pnl. to 0. if false collect pnl
  * 2. pnl = individual trade pnl
  * 3. allocSize = Trade max allocation size specified in the settings tab.
+ * @param {Boolean} reset - if true, then set closed trade pnl to 0
+ * @param {Number} pnl - profit and loss of the trade
+ * @param {Number} allocSize - Allocation size in percentage
  */
 function setClosedTradeTotalPnl(reset, pnl, allocSize){
 
@@ -164,6 +168,7 @@ function getTradesLatestData() {
 
 /** 
  * Get current total allocation
+ * @param {Array} tradesRawArray - List of active trades
  */
 function getCurrentAllocation(tradesRawArray){
   var totalAlloc = 0;
@@ -190,6 +195,14 @@ function getCurrentAllocation(tradesRawArray){
  * Add trade based on various criteria such as:
  * (1) max number of positions
  * (2) max drawdown gap for grid
+ * @param {Array} signalsRawArray - Table of signals
+ * @param {Array} tradesRawArray - List of active trades
+ * @param {String} longSignal - Long signal tag
+ * @param {String} shortSignal - Short signal tag
+ * @param {String} exitSignal - Exit signal tag
+ * @param {String} avoidSignal - Avoid signal tag
+ * @param {String} longOrder - Long order tag
+ * @param {String} shortOrder - Short order tag
  */
 function enterTrades(signalsRawArray, tradesRawArray, longSignal, shortSignal, exitSignal, avoidSignal, longOrder, shortOrder){
   var tradesArray = tradesRawArray;
@@ -238,6 +251,14 @@ function enterTrades(signalsRawArray, tradesRawArray, longSignal, shortSignal, e
 
 /**
  * Remove reversed trades from the list of trades
+ * @param {Array} signalsRawArray - List of signals
+ * @param {Array} tradesRawArray - List of current active trades
+ * @param {String} longSignal - Long signal tag
+ * @param {String} shortSignal - Short signal tag
+ * @param {String} exitSignal - Exit signal tag
+ * @param {String} avoidSignal - Avoid signal tag
+ * @param {String} longOrder - Long order tag
+ * @param {String} shortOrder - Short order tag
  */
 function exitReversedTrades(signalsRawArray, tradesRawArray, longSignal, shortSignal, exitSignal, avoidSignal, longOrder, shortOrder){
   var tradesArray = [];
@@ -284,6 +305,10 @@ function exitReversedTrades(signalsRawArray, tradesRawArray, longSignal, shortSi
 
 /**
  * From the list of Signals remove trade that are tagged with an exit signal
+ * @param {Array} signalsRawArray - List of signals
+ * @param {Array} tradesRawArray - List of current active trades
+ * @param {String} exitSignal - Exit signal tag
+ * @param {String} avoidSignal - Avoid signal tag
  */
 function exitTrades(signalsRawArray, tradesRawArray, exitSignal, avoidSignal){
 
@@ -314,6 +339,8 @@ function exitTrades(signalsRawArray, tradesRawArray, exitSignal, avoidSignal){
 /**
  * Check if a trade exists from provided ticker.
  * Return true if yes
+ * @param {String} ticker - ticker
+ * @param {Array} tradesRawArray - list of active trades
  */
 function existsTrade(ticker, tradesRawArray){
   
@@ -338,6 +365,8 @@ function existsTrade(ticker, tradesRawArray){
  * Provide two parameters:
  * 1. ticker
  * 2. range.%
+ * @param {String} ticker - ticker
+ * @param {Number} rangePct - range percentage for calculating the TP/SL
  */
 function getTradeTpSl(ticker, rangePct){
 

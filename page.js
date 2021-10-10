@@ -1,5 +1,7 @@
 /**
  * Return the html output of the signal page
+ * @param {String} umod - Model name
+ * 
  */
 function outputSignalHtmlPage(umod){
   return getHtmlHeader() + 
@@ -87,6 +89,7 @@ function getBodyCloseTag(){
  * Logo
  * Dropdown model selection
  * Button to open the Analytics spreadsheet link
+ * @param {String} umod - Model name
  */
 function getMenuTableHeader(umod){
   return `
@@ -120,6 +123,7 @@ function getMenuTableHeader(umod){
 /**
  * Open Master URL: from Analytics button
  * 1. umod = Model name
+ * @param {String} umod - Model name
  */
 function getMasterURL(umod) {
   var dataModel = SpreadsheetApp.openById(global_data_main_id).getSheetByName('Data:Model').getRange('A1:B1000').getValues();
@@ -138,6 +142,7 @@ function getMasterURL(umod) {
 /**
  * Get Performance chart url
  * 1. umod = Model name
+ * @param {String} umod - Model name
  */
 function getPerformanceChartUrl(umod){
   var dataModel = SpreadsheetApp.openById(global_data_main_id).getSheetByName('Data:Model').getRange('A1:F1000').getValues();
@@ -220,6 +225,7 @@ function getSignalTableBodyClosingTag(){
  * 16 = Signal
  * 17 = Sentiment
  * 18 = last price
+ * @param {String} umod - Model name
  */
 function getSignalTableRows(umod){
 
@@ -273,15 +279,15 @@ function getSignalTableRows(umod){
 
 /**
  * Get Sentiment score
- * Parameter to provide:
- * 1. ticker
- * 2. masterID
- * 3. what (Provide 1 = percentage score, 2 = color class, 3 = text)
  * 
  * Return:
  * 1. score in percentage
  * 2. color class code, bg-positive or bg-negative based on sentiment score
  * 3. text caption
+ * 
+ * @param {String} ticker - ticker
+ * @param {String} masterID - master SS id
+ * @param {String} what - Provide 1 for percentage score, 2 for color class, and 3 for text.
  */
 function getSentimentScorePage(ticker, masterID, what){
 
@@ -348,6 +354,9 @@ function getSentimentScorePage(ticker, masterID, what){
  * 4. Country
  * 5. Base
  * 6. Quote
+ * 
+ * @param {String} ticker - ticker
+ * @param {String} dataGlobalID - Global data SS id
  */
 function getInstrumentName(ticker, dataGlobalID){
   var dataInstrument = SpreadsheetApp.openById(dataGlobalID).getSheetByName('Data:Instrument').getRange('A2:G1000').getValues();
@@ -383,6 +392,9 @@ function getInstrumentName(ticker, dataGlobalID){
  * 1. ticker
  * 2. signal tag
  * 3. master id
+ * @param {String} ticker - ticker
+ * @param {String} signal - Signal tag
+ * @param {String} masterID - Master SS id
  */
 function getSignalEntryCaption(ticker, signal, masterID){
   var signalEntryCaption = '';
@@ -416,6 +428,7 @@ function getSignalEntryCaption(ticker, signal, masterID){
 
 /**
  * get a formatted projection
+ * @param {String} p - provide the projection tag
  */
 function getProjection(p){
   
@@ -432,6 +445,7 @@ function getProjection(p){
 /**
  * Get last signal(s) update date
  * MasterID = Master ID of the Master SS
+ * @param {String} masterID - Master SS id
  */
 function getSignalsUpdateDate(masterID) {
 

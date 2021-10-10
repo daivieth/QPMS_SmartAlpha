@@ -10,7 +10,7 @@ global_qpms_master_id = '1GaluY25euzzojwkKw4-5cQmiJByWqMoPk0UDXryGuWw';
 global_editor_sp_id = '1keMZ1P3XZ8bEKtVcOUWpU-84vOLoap1jeEi8bcKhbLE';
 global_sentiment_sp_id = '1suzCdwjNMIYOpqsGiVD7mK7GiN8siR4A914drYC8J9U';
 ******************************************************************************/
-var global_version = '2.2.9.3';
+var global_version = '2.2.9.4';
 
 var global_data_main_id = '1AFTbOuVvPTWS1peJ-zK6CUcsj2sy_nYGVaw2T8-7qf8';
 var global_main_base_url = 'https://script.google.com/macros/s/AKfycbzaEMiFQpBkD48QwB3t2VxlJpBRTBRCHQ5I7t-2lA4IUVv-OTBKRzzL42VsAGPAimSW/exec';
@@ -28,6 +28,7 @@ var global_sentiment_sp_id = '';
  * 
  * Note: Run script only on weekdays.
  * dev: force each scripts to run for testing purpose.
+ * @param {string} id
  */
 function triggerDataUpdate(id){
   var dev = false;
@@ -57,38 +58,29 @@ function triggerDataUpdate(id){
  * Collect querystring parameters
  * Sign in
  * Model selection
+ * @param {string} e
  */
 function doGet(e) {
   var umod = e.parameter.umod;
   var username = e.parameter.username;
+  var output;
 
   if (umod == null) {
 
     //Manage sign in
-    if (username != null) {
-      username = username.toString().toLowerCase();
-      var vusername = getDataMain(username, 1);
-      var umod = getDataMain(username, 8);
-      if (vusername != '' && vusername != null) { vusername = vusername.toString().toLowerCase(); }
-      if (username == vusername) {
-        return HtmlService.createHtmlOutput(outputSignalHtmlPage(umod));
-      }
-      else {
-        return HtmlService.createHtmlOutputFromFile('signin-error');
-      }
-    }
-    else {
-        return HtmlService.createHtmlOutputFromFile('index');
-    }
+    output = userSignin(username);
+
   }
   else {
+    //Generate the main page
     var vumod = getDataMain(umod,1);
     if (vumod != '' && vumod != null) { vumod = umod;}
     if (umod == vumod){
-      //Manage main signal page
-      return HtmlService.createHtmlOutput(outputSignalHtmlPage(umod));
+      output = HtmlService.createHtmlOutput(outputSignalHtmlPage(umod));
     }
   }
+
+  return output;
 }
 
 /**
@@ -100,6 +92,7 @@ function testLibrary(){
 
 /**
  * Get the master ID
+ * @param {string} id - SS id of the master sheet
  */
 function update_qpms_master_id(id) {
   global_qpms_master_id = id;
@@ -118,8 +111,13 @@ function update_qpms_master_id(id) {
  * 7 = ss-global-data-id
  * 8 = default-model
  * 9 = performance-chart-embed
+ * 10 = last-logon (timestamp)
  * 
- * Return Null if not found.
+ *  Return Null if not found.
+ * 
+ * @param {string} umod
+ * @param {string} what - provide the column of the data to return
+ * 
  */
 function getDataMain(umod, what) {
 
@@ -143,6 +141,7 @@ function getDataMain(umod, what) {
 
 /**
  * Initialise the sheet
+ * @param {boolean} force - if true then proceed without considering time
  */
 function initSheet(force){
 
@@ -201,7 +200,8 @@ function recalcSignal(){
 }
 
 /**
-* Get time from the New York Timezone
+* Get time from current time from the provided Timezone
+* @param {string} what - get time for which timezone?
 */
 function getTimeNow(what){
 
@@ -220,6 +220,7 @@ function getTimeNow(what){
 
 /**
  * Format date into dd-mmm-yyyy
+ * @param {Date} value - any date format to convert to dd-mm-yyyy
  */
 function getDateFormat(value) {
 

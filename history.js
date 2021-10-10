@@ -6,6 +6,10 @@
  * (3) the signal tag of the trade
  * Note: Columns: ticker, order, @price,	closedprice,	p/l (%),	Alloc.%,	entry date,	exit date
  * Columns 0 --> 7;
+ * 
+ * @param {Array} trade - trade record to add to history
+ * @param {String} avoidSignal - "avoid signal" tag as a reference
+ * @param {String} whatSignal - the signal tag of the trade
  */
 function addToHistoryTab(trade, avoidSignal, whatSignal){
   var currentTimestamp = getDateFormat(Date.now());
@@ -32,6 +36,7 @@ function addToHistoryTab(trade, avoidSignal, whatSignal){
 
 /**
  * Compute Performance; capture daily floating pnl
+ * @param {Boolean} force - if true, ignore the time constraint and proceed.
  */
 function getPortfolioPerformance(force){
   
@@ -121,6 +126,8 @@ function updatePerfTable(){
 /**
  * update benchmark performance table
  * what = 'system', 'benchmark'
+ * @param {string} what - provide which dataset to update, "system", "benchmark"
+ * @param {Array} perfData - 
  */
 function updatePerfTableFor(what, perfData){
 

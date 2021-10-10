@@ -6,6 +6,7 @@
  * (4) avoidSignal
  * (5) longOrder
  * (6) shortOrder
+ * @param {String} p - provide the signal tag displayed in the SS
  */
 function getSignalsOrdersTag(p){
 
@@ -33,6 +34,8 @@ function getSignalsOrdersTag(p){
  * 1 = caption
  * 2 = button color
  * 3 = text signal
+ * @param {String} p - signal tag provided in the SS
+ * @param {Integer} what - 1 = return text, 2 = return class, 3 = return tag
  */
 function getSignalsOrdersTagApp(p, what){
   var exitSignal = getSignalsOrdersTag('exitSignal');
@@ -85,7 +88,8 @@ function getNumberOfSignals(){
 }
 
 /**
-* Get Signal from tab Snap:Signals and copy to tab Signals. Format the content.
+* Get Signal from tab Snap:Signals and copy to tab Signals. Format the content
+@param {Boolean} force - If true then ignore time constraint and proceed
 */
 function getSignal(force) {
   var settingsTab = SpreadsheetApp.openById(global_editor_sp_id).getSheetByName('Settings');
@@ -247,6 +251,8 @@ function updateSignals(){
  * and get the maximum drawdown on that position for this particular ticker
  * ActiveTrades[0] = number of active position(s)
  * ActiveTrades[1] = largest drawdown
+ * @param {String} ticker - ticker
+ * @param {Array} tradesRawArray - Table of all active trades
  */
 function getNumberOfActiveTradesAndDrawdown(ticker, tradesRawArray){
   var numTradesAndMaxDrawdown = [];
