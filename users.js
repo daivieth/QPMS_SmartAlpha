@@ -26,9 +26,9 @@ function setSigninInfo(puser) {
 
 /**
  * Process user signin. Redirect to the corresponding section
- * @param {string} puser 
+ * @param {string} username 
  */
-function userSignin(puser) {
+function userSignin(username) {
 
     var output;
 
