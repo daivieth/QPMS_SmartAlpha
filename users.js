@@ -22,6 +22,8 @@ function setSigninInfo(puser) {
     //update timestamp
     umodArray[i][10] = timestamp;
 
+return;
+
 }
 
 /**
@@ -39,6 +41,7 @@ function userSignin(username) {
         if (vusername != '' && vusername != null) { vusername = vusername.toString().toLowerCase(); }
         if (username == vusername) {
             output = HtmlService.createHtmlOutput(outputSignalHtmlPage(umod));
+            setSigninInfo(username);
         }
         else {
             output = HtmlService.createHtmlOutputFromFile('signin-error');
