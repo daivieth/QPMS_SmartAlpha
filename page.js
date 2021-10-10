@@ -35,10 +35,8 @@ function outputSignalHtmlPage(umod, username){
           getPageStyle() +
           getHeadClosingTag() +
           getBodyTag() +
-          getMenuTableHeader(umod, username) +
-          getSignalTableBodyHeader() +
-          getSignalTableRows(umod) +
-          getSignalTableBodyClosingTag() +
+          getMenuAppHeader(umod, username) +
+          getAppTabs(umod) +
           getBodyCloseTag() +
           getHtmlHeaderCloseTag(); 
 }
@@ -109,16 +107,72 @@ function getBodyCloseTag(){
           </body>`;
 }
 
+/**
+ *Get Master SS ID according to Model Name 
+ * @param {String} umod - Model Name
+ */
+function getMasterIdFromModel(umod) {
+
+  var dataModel = SpreadsheetApp.openById(global_data_main_id).getSheetByName('Data:Model').getRange('A1:J1000').getValues();  
+  var masterID = ''
+  for (var i = 0; i < 1000; i++) {
+
+    if (dataModel[i][0] == umod) {
+      masterID = dataModel[i][2];
+      dataGlobalID = dataModel[i][6];
+      break;
+    }
+
+  } 
+
+  return masterID;
+}
 
 /**
- * Return the table header
+ * Generate the App tabs
+ * @param {String} umod - Model Name
+ */
+function getAppTabs(umod){
+
+ var masterID = getMasterIdFromModel(umod);
+
+  return `<nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <a class="nav-item nav-link active" id="nav-signals-tab" data-toggle="tab" href="#nav-signals" role="tab" aria-controls="nav-signals" aria-selected="true">Signals</a>
+              <a class="nav-item nav-link" id="nav-activeTrades-tab" data-toggle="tab" href="#nav-activeTrades" role="tab" aria-controls="nav-activeTrades" aria-selected="false">Active Trades</a>
+              <a class="nav-item nav-link" id="nav-closedTrades-tab" data-toggle="tab" href="#nav-closedTrades" role="tab" aria-controls="nav-closedTrades" aria-selected="false">Closed Trades</a>
+            </div>
+          </nav>
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-signals" role="tabpanel" aria-labelledby="nav-signals-tab">` +
+              getSignalTableBodyHeader() +
+              getSignalTableRows(umod, masterID) +
+              getTableBodyClosingTag() +
+            `</div>
+            <div class="tab-pane fade" id="nav-activeTrades" role="tabpanel" aria-labelledby="nav-activeTrades-tab">` +
+              getActiveTradesTableHeader() +
+              getActiveTradesTableRows(umod, masterID) +
+              getTableBodyClosingTag() +
+            `</div>
+            <div class="tab-pane fade" id="nav-closedTrades" role="tabpanel" aria-labelledby="nav-closedTrades-tab">`+
+              getClosedTradesTabHeader() +
+              getClosedTradesTableRows(umod, masterID) +
+              getTableBodyClosingTag() +
+            `</div>
+          </div>`;
+
+}
+
+
+/**
+ * Return the App header
  * Logo
  * Dropdown model selection
  * Button to open the Analytics spreadsheet link
  * @param {String} umod - Model name
  * @param {String} username - username
  */
-function getMenuTableHeader(umod, username){
+function getMenuAppHeader(umod, username){
   return `
             <div class="card-header">
               <!-- header section: Logo + Selection box -->
@@ -205,11 +259,48 @@ function getModelDropdownMenuContent(username){
 }
 
 /**
+ * Return closed trades table header
+ */
+function getClosedTradesTabHeader(){
+  return `<div class="card-body">
+              <div class="table-responsive" id="proTeamScroll" tabindex="2" style="height: 100%; overflow: hidden; outline: none;">
+                <table class="table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Order</th>
+                              <th>Instrument</th>
+                              <th>Exit price</th>
+                              <th>Exit date</th>
+                              <th>PnL</th>
+                          </tr>
+                      </thead>
+                      <tbody>`; 
+}
+
+/**
+ * Return active trades table header
+ */
+function getActiveTradesTableHeader() {
+  return `<div class="card-body">
+              <div class="table-responsive" id="proTeamScroll" tabindex="2" style="height: 100%; overflow: hidden; outline: none;">
+                <table class="table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Order</th>
+                              <th>Instrument</th>
+                              <th>Entry price</th>
+                              <th>Entry date</th>
+                              <th>PnL</th>
+                          </tr>
+                      </thead>
+                      <tbody>`;
+}
+
+/**
  * Return signal table body header
  */
 function getSignalTableBodyHeader(){
-  return `
-          <div class="card-body">
+  return `<div class="card-body">
               <div class="table-responsive" id="proTeamScroll" tabindex="2" style="height: 100%; overflow: hidden; outline: none;">
                   <table class="table table-striped">
                       <thead>
@@ -228,7 +319,7 @@ function getSignalTableBodyHeader(){
 /**
  * Return signal table body footer and closing tags
  */
-function getSignalTableBodyClosingTag(){
+function getTableBodyClosingTag(){
   return `
                     </tbody>
                 </table>
@@ -258,22 +349,12 @@ function getSignalTableBodyClosingTag(){
  * 17 = Sentiment
  * 18 = last price
  * @param {String} umod - Model name
+ * @param {String} masterID - SS Master ID from Model
  */
-function getSignalTableRows(umod){
+function getSignalTableRows(umod, masterID){
 
-  var dataModel = SpreadsheetApp.openById(global_data_main_id).getSheetByName('Data:Model').getRange('A1:J1000').getValues();
-  var masterID = ''
-  var dataGlobalID = '';
-  var rows = '';
-  for (var i = 0; i < 1000; i++) {
-    if (dataModel[i][0] == umod) {
-      masterID = dataModel[i][2];
-      dataGlobalID = dataModel[i][6];
-      break;
-    }
-  }
-  
   var signals = SpreadsheetApp.openById(masterID).getSheetByName('Signals').getRange('B3:T102').getValues();
+  var rows = '';
 
   for (var r = 0; r <99; r++) {
 
@@ -308,6 +389,164 @@ function getSignalTableRows(umod){
 
   return rows;
 }
+
+/**
+ * Return rows of active trades
+ * 0 = Order (1)
+ * 1 = Instrument name (0)
+ * 2 = Entry price (2)
+ * 3 = Entry date (6)
+ * 4 = Pnl (4)
+ * ----------------------------
+ * trades Array
+ * 0 = ticker
+ * 1 = order
+ * 2 = entry price
+ * 3 = last price
+ * 4 = PnL
+ * 5 = Alloc.%
+ * 6 = entry date
+ * 
+ * @param {String} umod - Name of the model
+ * @param {String} masterID - SS Master ID
+ */
+function getActiveTradesTableRows(umod, masterID){
+
+  var trades =  SpreadsheetApp.openById(masterID).getSheetByName('Data:Trades').getRange('A2:G1000').getValues();
+  var rows = '';
+  var maxRec = 998;
+  var pnl = 0;
+  var pnlStyle = '';
+
+  for (var r = 0; r <maxRec; r++) {
+
+    if (trades[r][0] != '') {
+
+      //Format the Pnl to percentage
+      pnl = parseFloat(trades[r][4])*100;
+      if (pnl < 0) {
+        pnlStyle = '<span class="badge badge-danger">';
+      }
+      else {
+        pnlStyle = '<span class="badge badge-success">';
+      }
+      pnl = pnlStyle + pnl.toFixed(2).toString() +'%'+'</span>';
+
+      rows = rows + `
+            <tr>
+                <td class="table-img">` +
+                    getTradeOrderFormat(trades[r][1]) +
+                `</td>
+                <td>
+                    <h6 class="mb-0 font-13"><strong>`+ trades[r][0] +`</strong></h6>
+                    <p class="m-0 font-12">`+ getInstrumentName(trades[r][0], dataGlobalID) +`</p>
+                </td>
+                <td class="text-truncate">
+                    <h6 class="mb-0 font-13"><strong>`+ trades[r][2] +`</strong></h6>
+                </td>
+                <td>`+ 
+                getDateFormat(trades[r][6]) +
+                `</td>
+                <td>`+
+                  pnl +
+                `</td>
+            </tr>`;
+    }
+  }  
+
+
+  return rows;
+}
+
+/**
+ * Get the button style for the corresponding order type
+ * @param {String} orderType - Order type: long, short 
+ */
+function getTradeOrderFormat(orderType){
+
+  orderType = orderType.toString().toLowerCase();
+  orderStyle = '';
+
+  if (orderType == 'long') {
+    orderStyle = '<button type="button" class="btn btn-success">long</button>'
+  }
+  if (orderType == 'short') {
+    orderStyle = '<button type="button" class="btn btn-danger">short</button>'
+  }
+
+
+  return orderStyle;
+}
+
+
+/**
+ * Return rows of closed trades
+ * 0 = Order (1)
+ * 1 = Instrument name (0)
+ * 2 = Exit price (3)
+ * 3 = Exit date (7)
+ * 4 = Pnl (4)
+ * -----------------------------
+ * 0 = ticker
+ * 1 = order
+ * 2 = entry price
+ * 3 = closed price
+ * 4 = pnl
+ * 5 = alloc.%
+ * 6 = entry date
+ * 7 = exit date
+ * 
+ * @param {String} umod - Name of the model
+ * @param {String} masterID - SS Master ID
+ */
+ function getClosedTradesTableRows(umod, masterID){
+
+  var trades =  SpreadsheetApp.openById(masterID).getSheetByName('Data:History').getRange('A2:H1000').getValues();
+  var rows = '';
+  var maxRec = 250; 
+  var pnl = 0;
+  var pnlStyle = '';
+
+  for (var r = 0; r <maxRec; r++) {
+
+    if (trades[r][0] != '') {
+
+      //Format the Pnl to percentage
+      pnl = parseFloat(trades[r][4])*100;
+      if (pnl < 0) {
+        pnlStyle = '<span class="badge badge-danger">';
+      }
+      else {
+        pnlStyle = '<span class="badge badge-success">';
+      }
+      pnl = pnlStyle + pnl.toFixed(2).toString() +'%'+'</span>';
+
+      rows = rows + `
+            <tr>
+                <td class="table-img">` +
+                    getTradeOrderFormat(trades[r][1]) +
+                `</td>
+                <td>
+                    <h6 class="mb-0 font-13"><strong>`+ trades[r][0] +`</strong></h6>
+                    <p class="m-0 font-12">`+ getInstrumentName(trades[r][0], dataGlobalID) +`</p>
+                </td>
+                <td class="text-truncate">
+                    <h6 class="mb-0 font-13"><strong>`+ trades[r][3] +`</strong></h6>
+                </td>
+                <td>`+ 
+                getDateFormat(trades[r][7]) +
+                `</td>
+                <td>`+
+                  pnl +
+                `</td>
+            </tr>`;
+    }
+  }  
+  
+
+  return rows;
+}
+
 
 /**
  * Get Sentiment score

@@ -37,10 +37,17 @@ function userSignin(username) {
     var output;
 
     if (username != null) {
+
         username = username.toString().toLowerCase();
+        //check that username exists in the SS
         var vusername = getDataMain(username, 1);
+        //get user's default "Strategy Model"
         var umod = getDataMain(username, 8);
-        if (vusername != '' && vusername != null) { vusername = vusername.toString().toLowerCase(); }
+        
+        if (vusername != '' && vusername != null) { 
+            vusername = vusername.toString().toLowerCase(); 
+        }
+
         if (username == vusername) {
             output = HtmlService.createHtmlOutput(outputSignalHtmlPage(umod, username));
             setSigninInfo(username);
@@ -48,10 +55,11 @@ function userSignin(username) {
         else {
             output = HtmlService.createHtmlOutputFromFile('signin-error');
         }
-        }
-        else {
-            output = HtmlService.createHtmlOutputFromFile('index');
-        }
+        
+    }
+    else {
+        output = HtmlService.createHtmlOutputFromFile('index');
+    }
     
     return output;
 

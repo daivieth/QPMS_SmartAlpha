@@ -10,7 +10,7 @@ global_qpms_master_id = '1GaluY25euzzojwkKw4-5cQmiJByWqMoPk0UDXryGuWw';
 global_editor_sp_id = '1keMZ1P3XZ8bEKtVcOUWpU-84vOLoap1jeEi8bcKhbLE';
 global_sentiment_sp_id = '1suzCdwjNMIYOpqsGiVD7mK7GiN8siR4A914drYC8J9U';
 ******************************************************************************/
-var global_version = '2.2.9.5';
+var global_version = '2.2.9.6';
 
 var global_data_main_id = '1AFTbOuVvPTWS1peJ-zK6CUcsj2sy_nYGVaw2T8-7qf8';
 var global_main_base_url = 'https://script.google.com/macros/s/AKfycbzaEMiFQpBkD48QwB3t2VxlJpBRTBRCHQ5I7t-2lA4IUVv-OTBKRzzL42VsAGPAimSW/exec';
@@ -44,11 +44,13 @@ function triggerDataUpdate(id){
 
   initSheet(dev); //H-2
   if ((dayOfWeek != 'SAT' && dayOfWeek != 'SUN') || dev) {
+
     getSentimentScore(dev); //H-1
     getSignal(dev); //H-0
     getTrades(dev); //H+1
     getTradesLatestData() //based on specific conditions
     getPortfolioPerformance(dev) //H+12
+
   }
 
 }
@@ -129,12 +131,16 @@ function getDataMain(umod, what) {
   umod = umod.toString().toLowerCase();
 
   for (var i = 0; i < numRecord; i++) {
+    
     selectUmod = dataTable[i][1].toString().toLowerCase();
+
     if (selectUmod == umod ){
       returnedData = dataTable[i];
       break;
     }
+
   }
+
   return returnedData[what];
 }
 
@@ -154,6 +160,7 @@ function initSheet(force){
 
 
   if ((getTimeNow('hour') >= timeFrom && getTimeNow('hour')< timeTo) || force ){  
+
     //set the version
     settingsTab.getRange('C10').setValue(global_version);
     //Set User Data ID
@@ -178,7 +185,10 @@ function initSheet(force){
     //set the benchmark to be used which is specified in tab settings
     getBenchmark();
 
-    if (force) { Logger.log('initialise sheet...');}
+    if (force) { 
+      Logger.log('initialise sheet...');
+    }
+
   }
 
 
