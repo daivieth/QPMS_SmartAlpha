@@ -77,7 +77,7 @@ function setClosedTradeTotalPnl(reset, pnl, allocSize){
   }
   else {
     //Add up each trade Pnl
-    calcTotalPnl = parseFloat(totalPnl.getValue()) + (parseFloat(pnl) * parseFloat(allocSize));
+    calcTotalPnl = totalPnl.getValue() + (pnl * allocSize);
     totalPnl.setValue(calcTotalPnl);
   }
 
