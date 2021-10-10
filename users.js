@@ -6,10 +6,11 @@
 function setSigninInfo(puser) {
 
     var timestamp = getDateFormat(Date.now());
-    var umodArray = SpreadsheetApp.openById(global_data_main_id).openSheetByName('Data:Main').getRange('A2:K20000').getValues();
+    var umodArray = SpreadsheetApp.openById(global_data_main_id).getSheetByName('Data:Main').getRange('A2:K20000').getValues();
     var username = '';
     var userEntryPos = 0;
     var i = 0;
+    var rowNumber = 2;
 
     //get user entry position
     for (i = 0; i < umodArray.length; i++) {   
@@ -20,7 +21,8 @@ function setSigninInfo(puser) {
         }
     }
     //update timestamp
-    umodArray[i][10] = timestamp;
+    rowNumber = rowNumber + i;
+    SpreadsheetApp.openById(global_data_main_id).getSheetByName('Data:Main').getRange('K'+rowNumber).setValue(timestamp);
 
 return;
 

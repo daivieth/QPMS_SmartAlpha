@@ -115,7 +115,7 @@ function update_qpms_master_id(id) {
  * 
  *  Return Null if not found.
  * 
- * @param {string} umod
+ * @param {string} umod - Model or User name
  * @param {string} what - provide the column of the data to return
  * 
  */
@@ -125,7 +125,7 @@ function getDataMain(umod, what) {
   var returnedData = [];
 
   var numRecord = 20000;
-  var dataTable = SpreadsheetApp.openById(global_data_main_id).getRange('A1:I'+numRecord).getValues();
+  var dataTable = SpreadsheetApp.openById(global_data_main_id).getSheetByName('Data:Main').getRange('A1:I'+numRecord).getValues();
 
   umod = umod.toString().toLowerCase();
 
