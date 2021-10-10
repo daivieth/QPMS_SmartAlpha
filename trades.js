@@ -41,7 +41,7 @@ function getTrades(force) {
       var dataTrades = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:Trades').getRange('A2:G200');
       var tradesRawArray = dataTrades.getValues();
       //Exit trades
-      setClosedTradeTotalPnl(true, 0, 0);
+      setClosedTradeTotalPnl(true, 0, 0,'','');
       tradesArray = exitTrades(signalsRawArray,tradesRawArray, exitSignal, avoidSignal);
       tradesArray = exitReversedTrades(signalsRawArray, tradesArray, longSignal, shortSignal, exitSignal, avoidSignal, longOrder, shortOrder);
       //Entering new trades
@@ -69,8 +69,11 @@ function getTrades(force) {
  * @param {Boolean} reset - if true, then set closed trade pnl to 0
  * @param {Number} pnl - profit and loss of the trade
  * @param {Number} allocSize - Allocation size in percentage
+ * @param {String} whatSignal - Signal of the selected trade
+ * @param {String} avoidSignal - Tag reference to "avoidSignal"
  */
-function setClosedTradeTotalPnl(reset, pnl, allocSize){
+function setClosedTradeTotalPnl(reset, pnl, allocSize, whatSignal, avoidSignal){
+
 
   var totalPnl = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:History').getRange('N17');
   var calcTotalPnl = 0;
@@ -80,10 +83,18 @@ function setClosedTradeTotalPnl(reset, pnl, allocSize){
     totalPnl.setValue(0);
   }
   else {
-    //Add up each trade Pnl
-    calcTotalPnl = totalPnl.getValue() + (pnl * allocSize);
-    totalPnl.setValue(calcTotalPnl);
+
+    if (whatSignal != avoidSignal) {
+
+      //Add up each trade Pnl
+      calcTotalPnl = totalPnl.getValue() + (pnl * allocSize);
+      totalPnl.setValue(calcTotalPnl);
+
+    }
+
   }
+
+  return calcTotalPnl;
 
 }
 
@@ -290,12 +301,14 @@ function exitReversedTrades(signalsRawArray, tradesRawArray, longSignal, shortSi
           //Add to history tab trade that are reversed
           if (signalType == longSignal && orderType == shortOrder){
             addToHistoryTab(tradesRawArray[i], avoidSignal, signalType);
+            //Add to total closed trade pnl of the day to compute performance
+            setClosedTradeTotalPnl(false, tradesRawArray[i][4], tradesRawArray[i][5], signalsRawArray[j][16], avoidSignal);            
           }
           if (signalType == shortSignal && orderType == longOrder){
             addToHistoryTab(tradesRawArray[i], avoidSignal, signalType);
+            //Add to total closed trade pnl of the day to compute performance
+            setClosedTradeTotalPnl(false, tradesRawArray[i][4], tradesRawArray[i][5], signalsRawArray[j][16], avoidSignal);            
           }
-          //Add to total closed trade pnl of the day to compute performance
-          setClosedTradeTotalPnl(false, tradesRawArray[i][4], tradesRawArray[i][5]);            
         }
       }
     }
@@ -327,7 +340,7 @@ function exitTrades(signalsRawArray, tradesRawArray, exitSignal, avoidSignal){
           //Add to history tab trades that receive exit signal
           addToHistoryTab(tradesRawArray[i], avoidSignal, signalsRawArray[j][16]);
           //Add to total closed trade pnl of the day to compute performance
-          setClosedTradeTotalPnl(false, tradesRawArray[i][4], tradesRawArray[i][5]);
+          setClosedTradeTotalPnl(false, tradesRawArray[i][4], tradesRawArray[i][5], signalsRawArray[j][16], avoidSignal);
         }
 
       }

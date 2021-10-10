@@ -2,7 +2,7 @@
 /**
  * Collect sentiment score for each instrument as provided by the index
  * This function is called from getSentimentScore()
- * @param {BigInteger} index - the number of the tab as provided in the Sentiment SS
+ * @param {Number} index - the number of the tab as provided in the Sentiment SS
  */
 function getTabDataSentiment(index){
   var sp = SpreadsheetApp.openById(global_sentiment_sp_id);
