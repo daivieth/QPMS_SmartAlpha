@@ -203,6 +203,62 @@ function getCurrentAllocation(tradesRawArray){
 }
 
 /**
+ * Check if portfolio is fully allocated.
+ * In that case, return true.
+ * @param {String} trades - The list of active trades 
+ */
+function portfolioIsFullyAllocated(trades) {
+  var isFullyAllocated = false;
+
+  if(getCurrentAllocation(trades) > 1) {
+
+    isFullyAllocated = true;
+
+  }
+
+  return isFullyAllocated;
+}
+
+/**
+ * Check if it is a reversed trade
+ * If it is a reversed trade signal,
+ * then return true.
+ * Trades Array:
+ * 0 = ticker
+ * 1 = order
+ * @param {String} ticker - Signal ticker
+ * @param {String} signalOrderTag - Signal order tag
+ * @param {Array} trades - List of active trades 
+ */
+function isReversedTrade(ticker, signalOrderTag, trades) {
+  var signalOrder = getTradeOrderFromSignalOrderTag(signalOrderTag);
+  var isRevertedTrade = false;
+  var selectTradeTicker = '';
+  var selectTradeOrder = '';
+
+  for (var i = 1; i < trades.length; i++) {
+
+    selectTradeTicker = trades[i][0];
+    selectTradeOrder = trades[i][1];
+
+    if (selectTradeTicker == ticker){
+      
+      if (selectTradeOrder != signalOrder){
+        isRevertedTrade = true;
+        break;
+      }
+      else {
+        break;
+      }
+
+    }
+
+  }
+
+  return isRevertedTrade;
+}
+
+/**
  * Add trade based on various criteria such as:
  * (1) max number of positions
  * (2) max drawdown gap for grid
@@ -227,37 +283,39 @@ function enterTrades(signalsRawArray, tradesRawArray, longSignal, shortSignal, e
   var alloc = maxAllocPerTrade;
   var row = [];
 
-  if (getCurrentAllocation(tradesRawArray) < 1){
+  if (alloc == '' || alloc == 0 ) { alloc = '1%';}
 
-    if (alloc == '' || alloc == 0 ) { alloc = '1%';}
+  for (var i = 0; i < signalsRawArray.length; i++){
 
-    for (var i = 0; i < signalsRawArray.length; i++){
-      ticker = signalsRawArray[i][0];
-      signalType = signalsRawArray[i][16];
-      marketPrice = signalsRawArray[i][18];
-      lastPrice = marketPrice;
+    ticker = signalsRawArray[i][0];
+    signalType = signalsRawArray[i][16];
+    marketPrice = signalsRawArray[i][18];
+    lastPrice = marketPrice;
 
-      if (signalType != '' && signalType != exitSignal && signalType != avoidSignal) {
-        row = [];
-        row.push(ticker);
-        if (signalType == longSignal)
-          row.push(longOrder);
-        if (signalType == shortSignal)
-          row.push(shortOrder);
-        row.push(marketPrice);
-        row.push(lastPrice);
-        row.push(pnl);
-        row.push(alloc);
-        row.push('');
-        tradesArray.push(row);
+    if (signalType != '' && signalType != exitSignal && signalType != avoidSignal) {
+
+      row = [];
+      row.push(ticker);
+      if (signalType == longSignal) {
+        row.push(longOrder);
       }
-    }
-  }
-  else {
-    //Remove signals added long and short signals if threshold reached
-  }
-  return tradesArray;
+      if (signalType == shortSignal){
+        row.push(shortOrder);
+      }
 
+      row.push(marketPrice);
+      row.push(lastPrice);
+      row.push(pnl);
+      row.push(alloc);
+      row.push('');
+      tradesArray.push(row);
+
+    }
+
+  }
+
+    
+  return tradesArray;
 }
 
 /**

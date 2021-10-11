@@ -29,6 +29,28 @@ function getSignalsOrdersTag(p){
 }
 
 /**
+ * Get trade order from signal tag
+ * @param {String} signalOrder - Signal order tag to convert to trade order 
+ */
+function getTradeOrderFromSignalOrderTag(signalOrder) {
+
+  var longSignal = getSignalsOrdersTag('longSignal');
+  var shortSignal = getSignalsOrdersTag('shortSignal');
+  var tradeLongOrder = getSignalsOrdersTag('longOrder');
+  var tradeShortOrder = getSignalsOrdersTag('shortOrder');
+  var OrderType = '';
+
+  if (signalOrder == longSignal){
+    OrderType = tradeLongOrder;
+  }
+  if (signalOrder == shortSignal){
+    OrderType = tradeShortOrder;
+  }
+
+  return OrderType;
+}
+
+/**
  * Return signal string for app interface
  * what:
  * 1 = caption
@@ -151,8 +173,10 @@ function getSignal(force) {
       }
     }
     //Update signals: remove signals outside of the risk envelope
-    updateSignals();    
+    updateSignals();
   }
+
+  return;
 }
 
 /**
@@ -197,6 +221,7 @@ function updateSignals(){
   var selectedPositionMaxDrawdown = 0;
   var selectedSignalTag = '';
   var tradeInfo = [];
+  var portfIsFullAllocated = portfolioIsFullyAllocated(tradesRawArray);
 
   signalsRawArray = signalsTab.getRange(signalsRange).getValues();
   for (var i = 0; i < signalsRawArray.length; i++){
@@ -224,6 +249,14 @@ function updateSignals(){
       //Check if trade reached tp or sl
       tradeInfo = getTradeTpSl(signalsRawArray[i][0], signalsRawArray[i][3]);
       if (tradeInfo[0]) signalsRawArray[i][16] = getSignalsOrdersTag('exitSignal');
+
+      //Remove signals if the portfolio is fully allocated
+      if (portfIsFullAllocated) {
+        if (!isReversedTrade(ticker, selectedSignalTag, tradesRawArray)){
+          signalsRawArray[i][16] = '';
+        }
+      }
+
     }
     else {
       //flag position(s) that are not listed but to avoid
@@ -243,6 +276,8 @@ function updateSignals(){
 
   //import the results to signal column
   signalsTab.getRange(signalTagCol+signalsRangeStart+':'+signalTagCol+signalsRangeEnd).setValues(updatedSignalsColumn);
+
+  return;
 }
 
 
@@ -270,5 +305,6 @@ function getNumberOfActiveTradesAndDrawdown(ticker, tradesRawArray){
   }
   numTradesAndMaxDrawdown.push(tradeCount);
   numTradesAndMaxDrawdown.push(drawdown);
+
   return numTradesAndMaxDrawdown;
 }
