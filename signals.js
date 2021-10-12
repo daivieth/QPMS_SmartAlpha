@@ -205,7 +205,7 @@ function getSignal(force) {
 function updateSignals(){
 
   var signalsTab = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Signals');
-  var tradesRawArray = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:Trades').getRange('A2:A200').getValues();
+  var tradesRawArray = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:Trades').getRange('A2:G1000').getValues();
   var signalsRange = 'B3:T102';
   var signalsRangeStart = 3;
   var signalsRangeEnd = 102;

@@ -184,13 +184,11 @@ function getTradesLatestData() {
 function getCurrentAllocation(tradesRawArray){
   var totalAlloc = 0;
   var allocColIndex = 5;
-  var allocColStartRow = 2;
-  var allocColEndRow = 300;
   var maxAllocPerTrade = SpreadsheetApp.openById(global_editor_sp_id).getSheetByName('Settings').getRange('C6').getValue();
   var numOfSignals = getNumberOfSignals();
   var signalAlloc = numOfSignals * maxAllocPerTrade;
 
-  for (var i = allocColStartRow; i < allocColEndRow; i++){
+  for (var i = 0; i < 1000; i++){
     if ( tradesRawArray[i] != null) {
       if (tradesRawArray[i][allocColIndex] != ''){
         totalAlloc = totalAlloc + tradesRawArray[i][allocColIndex];
@@ -241,8 +239,7 @@ function isReversedTrade(ticker, signalOrderTag, trades) {
     selectTradeTicker = trades[i][0];
     selectTradeOrder = trades[i][1];
 
-    if (selectTradeTicker == ticker){
-      
+    if (selectTradeTicker == ticker){      
       if (selectTradeOrder != signalOrder){
         isRevertedTrade = true;
         break;
@@ -250,7 +247,6 @@ function isReversedTrade(ticker, signalOrderTag, trades) {
       else {
         break;
       }
-
     }
 
   }
@@ -418,7 +414,7 @@ function existsTrade(ticker, tradesRawArray){
   var tradeFound = false;
 
   for (var i = 0; i < tradesRawArray.length; i++){
-    if (tradesRawArray[i].toString().toLowerCase() == ticker.toLowerCase()) {
+    if (tradesRawArray[i][0].toString().toLowerCase() == ticker.toLowerCase()) {
       tradeFound = true;
       break;
     }
