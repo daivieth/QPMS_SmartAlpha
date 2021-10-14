@@ -85,6 +85,10 @@ function getPortfolioPerformance(force){
       //Update performance table
       updatePerfTable();
 
+      //Save the current system performance
+      var currentSystem1dPerf = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:History').getRange('N8').getValue();
+      SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:History').getRange('N11').setValue(currentSystem1dPerf);
+
       //Flag to yes after completion of the process
       portfTag.setValue('Yes');
     }
@@ -202,23 +206,4 @@ function updatePerfTableFor(what, perfData){
     system1Y.setValue(parseFloat(p1Y));    
   }
 
-}
-
-/**
- * Get today's trades portfolio performance
- * Return total trades performance
- */
-function getTodayTradesPortfPerf(){
-  
-  var dataTrade = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:Trades');
-  var perfCol = 'H';
-  var perfStartRow = 2;
-  var perfEndRow = 1000;
-  var totalPerf = 0;
-
-  for (var i = perfStartRow; i <= perfEndRow; i++) {
-    totalPerf = totalPerf + dataTrade.getRange(perfCol + i).getValue();
-  }
-  return totalPerf;
-  
 }

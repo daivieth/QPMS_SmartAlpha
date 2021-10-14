@@ -176,9 +176,7 @@ function initSheet(force){
     //set pie access
     var pie = settingsTab.getRange('A1');
     pie.setFormula('=HYPERLINK("https://docs.google.com/spreadsheets/d/'+ global_qpms_master_id +'","π")');
-    //Collect trades performance, set previous perf.d.%
-    var dataPrevPortfolioPerformance = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:History').getRange('N11');
-    dataPrevPortfolioPerformance.setValue(getTodayTradesPortfPerf());
+    
     //set portfolio performance calc to "No" to trigger process
     var calcPortfTag = dataHistoryTab.getRange('N2');
     calcPortfTag.setValue('No');
