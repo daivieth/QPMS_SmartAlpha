@@ -49,6 +49,7 @@ function getTrades(force) {
 
       numberOfTrades = tradesArray.length + 1;
       if (tradesArray.length > 0) {
+
         try {
           dataTrades = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:Trades').getRange('A2:G1000');
           dataTrades.clearContent();
@@ -57,14 +58,13 @@ function getTrades(force) {
         }
         catch(err) {
           Logger.log(err);
-        }
-        finally {
           dataTrades = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:Trades').getRange('A2:G1000');
           dataTrades.clearContent();
           numberOfTrades = tradesRawArray.length +1;
           dataTrades = SpreadsheetApp.openById(global_qpms_master_id).getSheetByName('Data:Trades').getRange('A2:G'+ numberOfTrades);
           dataTrades.setValues(tradesRawArray);
         }
+
       }
 
       //set flag to yes to confirm trades have been processed
