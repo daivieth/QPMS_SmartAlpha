@@ -141,6 +141,7 @@ function getAppTabs(umod){
               <a class="nav-item nav-link active" id="nav-signals-tab" data-toggle="tab" href="#nav-signals" role="tab" aria-controls="nav-signals" aria-selected="true">Signals</a>
               <a class="nav-item nav-link" id="nav-activeTrades-tab" data-toggle="tab" href="#nav-activeTrades" role="tab" aria-controls="nav-activeTrades" aria-selected="false">Active Trades</a>
               <a class="nav-item nav-link" id="nav-closedTrades-tab" data-toggle="tab" href="#nav-closedTrades" role="tab" aria-controls="nav-closedTrades" aria-selected="false">Closed Trades</a>
+              <a class="nav-item nav-link" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="false">About</a>
             </div>
           </nav>
           <div class="tab-content" id="nav-tabContent">
@@ -159,6 +160,9 @@ function getAppTabs(umod){
               getClosedTradesTableRows(umod, masterID) +
               getTableBodyClosingTag() +
             `</div>
+            <div class="tab-pane fade" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">`+
+            getAboutTabContent(masterID) +
+            `</div>            
           </div>`;
 
 }
@@ -237,6 +241,16 @@ function getPerformanceChartUrl(umod){
   }
 
   return chartUrl;
+}
+
+/**
+ * Get the about tab content
+ * @param {String} masterID - id of the master SS
+ */
+function getAboutTabContent(masterID){
+  var dataAbout = SpreadsheetApp.openById(masterID).getSheetByName('Settings').getRange('F12').getValue();
+  content = `<div class="card-body" style="height: 200px;">`+ dataAbout +`</div>`;
+  return content;
 }
 
 /**
