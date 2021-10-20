@@ -225,47 +225,54 @@ function updateSignals(){
 
   signalsRawArray = signalsTab.getRange(signalsRange).getValues();
   for (var i = 0; i < signalsRawArray.length; i++){
+
     selectedSignalTag = signalsRawArray[i][16];
     ticker = signalsRawArray[i][0];
-    //Filter out exit and blank signals
-    if (selectedSignalTag != getSignalsOrdersTag('exitSignal') && selectedSignalTag != ''){
-      drawdownThreshold = (signalsRawArray[i][3] / maxAllowedTradesPerPosition )* -1;
-      numberOfActiveTradeAndDrawdown = getNumberOfActiveTradesAndDrawdown(ticker, tradesRawArray);
-      selectedNumberOfActiveTrades = numberOfActiveTradeAndDrawdown[0];
-      selectedPositionMaxDrawdown = numberOfActiveTradeAndDrawdown[1];
-      //update only if has at least one active trade
-      if (selectedNumberOfActiveTrades > 0){
-        //if number of active trades are above the threshold then remove the signal
-        if (selectedNumberOfActiveTrades >= maxAllowedTradesPerPosition) {
-          signalsRawArray[i][16] = '';
-        }
-        else {
-          //if number of active trades under the max allowed trades per position
-          //Remove signals that may be outside of the risk envelope
-          if (selectedPositionMaxDrawdown > drawdownThreshold)
+
+    if (ticker != '' && ticker != null) {
+      //Filter out exit and blank signals
+      if (selectedSignalTag != getSignalsOrdersTag('exitSignal') && selectedSignalTag != ''){
+        drawdownThreshold = (signalsRawArray[i][3] / maxAllowedTradesPerPosition )* -1;
+        numberOfActiveTradeAndDrawdown = getNumberOfActiveTradesAndDrawdown(ticker, tradesRawArray);
+        selectedNumberOfActiveTrades = numberOfActiveTradeAndDrawdown[0];
+        selectedPositionMaxDrawdown = numberOfActiveTradeAndDrawdown[1];
+        //update only if has at least one active trade
+        if (selectedNumberOfActiveTrades > 0){
+          //if number of active trades are above the threshold then remove the signal
+          if (selectedNumberOfActiveTrades >= maxAllowedTradesPerPosition) {
             signalsRawArray[i][16] = '';
+          }
+          else {
+            //if number of active trades under the max allowed trades per position
+            //Remove signals that may be outside of the risk envelope
+            if (selectedPositionMaxDrawdown > drawdownThreshold)
+              signalsRawArray[i][16] = '';
+          }
+        }
+        //Remove signals if the portfolio is fully allocated
+        if (portfIsFullAllocated) {
+          if (!isReversedTrade(ticker, selectedSignalTag, tradesRawArray)){
+            signalsRawArray[i][16] = '';
+          }
+        }
+
+      }
+      else {
+        //flag position(s) that are not listed but to avoid
+        if (selectedSignalTag == getSignalsOrdersTag('exitSignal')){
+          if (!existsTrade(ticker, tradesRawArray)) {
+            signalsRawArray[i][16] = getSignalsOrdersTag('avoidSignal');
+          }
         }
       }
       //Check if trade reached tp or sl
       tradeInfo = getTradeTpSl(signalsRawArray[i][0], signalsRawArray[i][3]);
-      if (tradeInfo[0]) signalsRawArray[i][16] = getSignalsOrdersTag('exitSignal');
-
-      //Remove signals if the portfolio is fully allocated
-      if (portfIsFullAllocated) {
-        if (!isReversedTrade(ticker, selectedSignalTag, tradesRawArray)){
-          signalsRawArray[i][16] = '';
-        }
+      if (tradeInfo[0]) {
+        signalsRawArray[i][16] = getSignalsOrdersTag('exitSignal');
       }
 
     }
-    else {
-      //flag position(s) that are not listed but to avoid
-      if (selectedSignalTag == getSignalsOrdersTag('exitSignal')){
-        if (!existsTrade(ticker, tradesRawArray)) {
-          signalsRawArray[i][16] = getSignalsOrdersTag('avoidSignal');
-        }
-      }
-    }
+
   }
 
   //Get only the Signal column
